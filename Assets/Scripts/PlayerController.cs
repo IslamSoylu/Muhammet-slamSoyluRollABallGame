@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
-
+    public TMP_Text countText;
+    public TMP_Text winText;
     private Rigidbody rb;
+    public int count;
 
     //holds movement x and y
     private float movementX;
@@ -15,8 +18,12 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        count = 0; //set to 0
+        SetCountText();
         rb = GetComponent<Rigidbody>();  //sets rigidbody componet to rb
+        winText.gameObject.SetActive(false);
     } 
+
 
     void OnMove(InputValue movementValue)
     {
@@ -34,5 +41,29 @@ public class PlayerController : MonoBehaviour
         //set the movement to the x and z variables (keep y at 0)
         Vector3 movement = new Vector3(movementX, 0.0f, movementY);
         rb.AddForce(movement * speed);
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("PickUp"))
+        {
+            other.gameObject.SetActive(false);
+            
+            //add 1 to the score
+            count = count + 1;
+
+            SetCountText();
+        }
+
+    }
+
+    void SetCountText()
+    {
+        countText.text = "Count:" + count.ToString();
+        if (count >= 12)
+        {
+            winText.gameObject.SetActive(true);
+        }
     }
 }   
